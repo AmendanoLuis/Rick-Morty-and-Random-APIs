@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rick & Morty and Random Users</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #007bff;
+        }
+
+        form {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            text-align: left;
+            width: 300px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        input[type="submit"]:hover {
+            background: #0056b3;
+        }
+
+        .container-Info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .info,
+        .infoN {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            width: 48%; /* Asegura que cada columna tenga un tamaño adecuado */
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        li img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+        }
+
+        strong {
+            color: #007bff;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- FORMULARIO -->
+    <h2>Formulario de Búsqueda</h2>
+
+    <form id="formBusqueda">
+        <label for="texto">Busca un personaje de Rick & Morty:</label>
+        <input type="text" id="texto" oninput="validarCampo()">
+        <input type="submit" id="btnEnviar" value="Buscar">
+    </form>
+
+    <!-- Contenedor para las dos columnas -->
+    <div class="container-Info">
+        <div class="info"></div>
+        <div class="infoN"></div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // Funcion validar Campo 
+            function validarCampo() {
+                var inp = document.getElementById('texto');
+                inp.value = inp.value.replace(/[^a-zA-Z\s]/g, '');
+            }
+
+            // Funcion obtener datos API Rick and Morty
+            $("#formBusqueda").submit(function (event) {
+                event.preventDefault();
+
+                var inpBusc = $("#texto").val();
+
+                // Comprobamos que no este vacío
+                if (inpBusc.trim() === "") {
+                    $(".info").html('<p>Por favor, ingrese un texto para buscar.</p>');
+                    return;
+                }
+
+                // Función AJAX, para obtener información de API
+                // Dentro de la API Rick&Morty hay tres grandes sectores de datos
+                // Nosotros buscaremos personajes ( character ) por sus nombres
+                $.get('api_rick&morty.php?name=' + inpBusc
+                    , function (data) {
+
+                        // Si encontramos resultados, es decir si existen datos
+                        if (data.results) {
+
+                            // Añadimos html a nuestro contenedor de información
+                            // Hacemos un mapeo de los datos para obtener el character
+                            // Una vez obtenido el character ya podremos acceder a sus propiedades
+                            // Como nombre y especie
+                            // Usamos join('') para unir todos los resultados y separarlos por ''
+                            $(".info").html(`
+                            <h3>Resultados Rick y Morty API:</h3>
+                            <ul>
+                                ${data.results.map(function (character) {
+                                return `<li><strong>${character.name}</strong> - ${character.species}</li>`;
+                            }).join('')}
+                            </ul>
+                        `);
+                        } else {
+                            $(".info").html('<p>No se encontraron personajes con ese nombre.</p>');
+                        }
+
+                    }).fail(function () {
+                        $('.info').html('<p>Error al cargar los datos Rick y Morty.</p>');
+                    });
+            });
+
+            // Obtener datos API de personas random
+            $.ajax({
+                url: 'https://randomuser.me/api/',
+                method: 'GET',
+                dataType: 'json',
+                success: function (result) {
+                    if (result.results) {
+                        let personaRandom = result.results.map(function (persona) {
+                            return `<li>
+                                <strong>${persona.name.first} ${persona.name.last}</strong> - ${persona.gender}, ${persona.nat}
+                                <img src="${persona.picture.thumbnail}" alt="Foto ${persona.name.first}">
+                            </li>`;
+                        }).join('');
+                        $(".infoN").html(`
+                            <h3>Resultados Personas Random API:</h3>
+                            <ul>
+                                ${personaRandom}
+                            </ul>
+                        `);
+                    } else {
+                        $(".infoN").html('<p>No se encontraron personajes con ese nombre.</p>');
+                    }
+                },
+                error: function () {
+                    $('.infoN').html('<p>Hubo un error al cargar los datos de personas.</p>');
+                }
+            });
+
+        });
+
+    </script>
+</body>
+
+</html>
