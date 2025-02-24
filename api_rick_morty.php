@@ -16,7 +16,7 @@ header("Content-Type: application/json");
  * @param string $name Nombre del personaje a buscar.
  * @return string JSON con la información del personaje o un mensaje de error.
  */
-function getCharacterData($name) {
+function obtenerPersonaje($name) {
     /**
      * @var string $api_url URL de la API con el parámetro de búsqueda
      */
@@ -35,12 +35,12 @@ function getCharacterData($name) {
  *
  * @return void
  */
-function handleRequest() {
+function mostrarPersonaje() {
     if (isset($_GET['name']) && !empty($_GET['name'])) {
-        echo getCharacterData($_GET['name']);
+        echo obtenerPersonaje($_GET['name']);
     } else {
         echo json_encode(["error" => "Parámetro 'name' no proporcionado"]);
     }
 }
 
-handleRequest();
+mostrarPersonaje();
