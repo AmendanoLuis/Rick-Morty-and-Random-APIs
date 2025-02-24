@@ -71,7 +71,8 @@
             border-radius: 8px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             text-align: left;
-            width: 48%; /* Asegura que cada columna tenga un tamaño adecuado */
+            width: 48%;
+            /* Asegura que cada columna tenga un tamaño adecuado */
         }
 
         ul {
@@ -137,7 +138,7 @@
 
                 validarCampo();
 
-                
+
                 var inpBusc = $("#texto").val();
 
                 // Comprobamos que no este vacío
@@ -151,6 +152,7 @@
                 // Nosotros buscaremos personajes ( character ) por sus nombres
                 $.get('api_rick_morty.php?name=' + inpBusc
                     , function (data) {
+                        console.log(data); // Para ver qué devuelve la API
 
                         // Si encontramos resultados, es decir si existen datos
                         if (data.results) {
