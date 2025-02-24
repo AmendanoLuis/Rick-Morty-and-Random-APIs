@@ -105,11 +105,11 @@
 <body>
 
     <!-- FORMULARIO -->
-    <h2>Formulario de Búsqueda</h2>
+    <h2>Rick & Morty | Human Generator</h2>
 
     <form id="formBusqueda">
         <label for="texto">Busca un personaje de Rick & Morty:</label>
-        <input type="text" id="texto" oninput="validarCampo()">
+        <input type="text" id="texto">
         <input type="submit" id="btnEnviar" value="Buscar">
     </form>
 
@@ -135,6 +135,9 @@
             $("#formBusqueda").submit(function (event) {
                 event.preventDefault();
 
+                validarCampo();
+
+                
                 var inpBusc = $("#texto").val();
 
                 // Comprobamos que no este vacío
@@ -201,6 +204,7 @@
                     $('.infoN').html('<p>Hubo un error al cargar los datos de personas.</p>');
                 }
             });
+
 
         });
 
